@@ -1,0 +1,28 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "This is the backend directory of the project Task Manager created using Node.js, Express.js, and MongoDB.",
+  "keywords": [
+    "backend",
+    "project",
+    "task",
+    "manager",
+    "nodejs",
+    "expressjs",
+    "mongodb"
+  ],
+  "license": "ISC",
+  "author": "Sumit Kumar Shaw",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "colors": "^1.4.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.2"
+  }
+}
