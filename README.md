@@ -4,9 +4,7 @@ A simple Task Management application built using **Express.js** for the backend 
 
 ## Demo Video
 
-Watch the demo video of the Task Management App:
-
-[![Task Management Demo](https://drive.google.com/file/d/189fa1iBRxcFoNGLI6FUoxv2vFIJmgIsZ/view?usp=sharing)
+Watch the demo video of the Task Management App on [Demo](https://drive.google.com/file/d/189fa1iBRxcFoNGLI6FUoxv2vFIJmgIsZ/view?usp=sharing).
 
 ## Features
 
