@@ -2,12 +2,15 @@ const express=require("express");
 
 const app=express();
 
+const cors=require("cors");
+
 const {ServerConfig, DatabaseConfig}=require("./config");
 
 const auth=require("./routes/auth");
-const todo=require("./routes/todo")
+const todo=require("./routes/todo");
 
 app.use(express.json());
+app.use(cors());
 
 DatabaseConfig();
 

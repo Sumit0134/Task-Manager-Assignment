@@ -1,0 +1,49 @@
+.task {
+  width: 100%;
+  min-height: 100vh;
+  max-height: auto;
+  position: relative;
+}
+
+.todo-card {
+  border: 1px solid black;
+}
+
+.todo-card-p {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.card-icons {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.del {
+  color: red;
+}
+
+.card-icon-head {
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.card-icon-head:hover {
+  box-shadow: rgb(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.task-update {
+  position: absolute;
+  position: fixed;
+  top: 80px;
+  left: 0px;
+  width: 100%;
+  height: 80vh;
+  display: none;
+  background-color: rgb(147, 140, 140);
+}
+
+.update{
+    height: 100%;
+}
+
