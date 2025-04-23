@@ -2,6 +2,12 @@
 
 A simple Task Management application built using **Express.js** for the backend and **React** for the frontend. The application allows users to manage tasks, including creating, updating, and deleting tasks. It connects to a MongoDB database to store task data and associate tasks with users.
 
+## Demo Video
+
+Watch the demo video of the Task Management App:
+
+[![Task Management Demo](https://drive.google.com/file/d/189fa1iBRxcFoNGLI6FUoxv2vFIJmgIsZ/view?usp=sharing)
+
 ## Features
 
 - **Create Tasks**: Users can add new tasks with titles and descriptions.
