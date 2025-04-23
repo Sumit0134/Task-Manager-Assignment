@@ -32,18 +32,26 @@
   box-shadow: rgb(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
-.task-update {
-  position: absolute;
-  position: fixed;
-  top: 80px;
-  left: 0px;
+.update input,
+.update textarea {
   width: 100%;
-  height: 80vh;
-  display: none;
-  background-color: rgb(147, 140, 140);
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.update{
-    height: 100%;
+.update button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
+
+.update button:hover {
+  background-color: #45a049;
+}
+
 

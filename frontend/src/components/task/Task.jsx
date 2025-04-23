@@ -3,13 +3,13 @@ import "./Task.css";
 import TaskCard from "./TaskCard";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Update from "./Update";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Task = () => {
   const [inputs, setInputs] = useState({ title: "", description: "" });
   const [taskList, setTaskList] = useState([]);
-  const [showUpdate, setShowUpdate] = useState(false);
+  const navigate = useNavigate();
   const id = sessionStorage.getItem("id");
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const Task = () => {
 
     if (id) {
       try {
-        const res = await axios.post("http://localhost:3000/api/v2/addTask", {
+        const res = await axios.post(`http://localhost:3000/api/v2/addTask`, {
           title: inputs.title,
           description: inputs.description,
           id: id,
@@ -72,11 +72,10 @@ const Task = () => {
     updatedList.splice(index, 1);
     setTaskList(updatedList);
 
-    if (id && task._id) {
+    const userId = sessionStorage.getItem("id");
+    if (userId && task._id) {
       try {
-        await axios.delete(`http://localhost:3000/api/v2/deleteTask/${task._id}`, {
-          data: { email: "dummy@gmail.com" }, 
-        });
+        await axios.delete(`http://localhost:3000/api/v2/deleteTask/${task._id}?userId=${user._id}`);
         toast.success("Task deleted.");
       } catch (err) {
         toast.error("Error deleting task.");
@@ -85,8 +84,8 @@ const Task = () => {
     }
   };
 
-  const dis = (value) => {
-    setShowUpdate(value === "block");
+  const handleUpdate = (taskId) => {
+    navigate(`/updateTask/${taskId}`);
   };
 
   return (
@@ -127,7 +126,8 @@ const Task = () => {
                       description={item.description}
                       id={index}
                       delid={del}
-                      display={dis}
+                      onUpdate={handleUpdate} 
+                      taskId={item._id}  
                     />
                   </div>
                 ))}
@@ -135,14 +135,6 @@ const Task = () => {
           </div>
         </div>
       </div>
-
-      {showUpdate && (
-        <div className="task-update" id="task-update">
-          <div className="container update">
-            <Update display={dis} />
-          </div>
-        </div>
-      )}
     </>
   );
 };

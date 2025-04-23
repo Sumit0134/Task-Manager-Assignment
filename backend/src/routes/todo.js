@@ -21,27 +21,32 @@ router.post("/addTask", async (req, res) => {
 });
 
 
-//update
+// update task route
 router.put("/updateTask/:id", async (req, res) => {
   try {
-    const { title, description, email } = req.body;
+    const { title, description } = req.body;
+    const taskId = req.params.id;
 
-    const existingUser = await UserModel.findOne({ email });
-    if (!existingUser) {
-      return res.status(404).json({ message: "User not found" });
+    console.log("Request body:", req.body);  // Log the request body (task data)
+    console.log("Task ID:", taskId);  // Log the task ID received from the URL
+
+    if (!title || !description) {
+      return res.status(400).json({ message: "Title and description are required" });
     }
 
-    const updatedTodo = await TodoModel.findByIdAndUpdate(
-      req.params.id,
-      { title, description },
-      { new: true }
-    );
-
-    if (!updatedTodo) {
+    // Find the task by ID before updating
+    const taskToUpdate = await TodoModel.findById(taskId);
+    if (!taskToUpdate) {
+      console.log("Task not found");  // Log if task is not found
       return res.status(404).json({ message: "Task not found" });
     }
 
-    res.status(200).json({ message: "Task updated", updatedTodo });
+    // Update the task
+    taskToUpdate.title = title;
+    taskToUpdate.description = description;
+    await taskToUpdate.save();
+
+    res.status(200).json({ message: "Task updated successfully", taskToUpdate });
   } catch (error) {
     console.error("Error updating task:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -51,16 +56,29 @@ router.put("/updateTask/:id", async (req, res) => {
 //delete
 router.delete("/deleteTask/:id", async (req, res) => {
   try {
-    const { email } = req.body;
-    const existingUser=await UserModel.findOneAndUpdate({email}, {$pull: {todos: req.params.id}});
-    if(existingUser){
-        await TodoModel.findByIdAndDelete(req.params.id)
-        res.status(200).json({message: "task deleted"})
+    const { userId } = req.body;
+    console.log("Trying to delete task with ID:", req.params.id);
+    console.log("From user with ID:", userId);
+
+    const existingUser = await UserModel.findByIdAndUpdate(userId, {
+      $pull: { todos: req.params.id },
+    });
+
+    if (existingUser) {
+      const deleted = await TodoModel.findByIdAndDelete(req.params.id);
+      console.log("Deleted task:", deleted);
+      return res.status(200).json({ message: "Task deleted" });
     }
+
+    console.log("User not found");
+    res.status(404).json({ message: "User not found" });
   } catch (error) {
-    console.log(error)
+    console.error("Delete task error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
 
 //get
 router.get("/getTask/:id", async (req, res)=>{
@@ -76,5 +94,21 @@ router.get("/getTask/:id", async (req, res)=>{
         console.log(error)
     }
 })
+
+// get a single task by its ID
+router.get("/getSingleTask/:id", async (req, res) => {
+  try {
+    const todo = await TodoModel.findById(req.params.id);
+    if (todo) {
+      res.status(200).json({ todo });
+    } else {
+      res.status(404).json({ message: "Task not found" });
+    }
+  } catch (error) {
+    console.error("Error fetching task:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 module.exports = router;
