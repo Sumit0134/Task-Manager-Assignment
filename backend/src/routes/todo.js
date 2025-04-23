@@ -7,8 +7,8 @@ const { UserModel, TodoModel } = require("../models");
 //create
 router.post("/addTask", async (req, res) => {
   try {
-    const { title, description, email } = req.body;
-    const existingUser = await UserModel.findOne({ email });
+    const { title, description, id } = req.body; 
+    const existingUser = await UserModel.findById(id);
     if (existingUser) {
       const todo = new TodoModel({ title, description, user: existingUser });
       await todo.save().then(() => res.status(200).json({ todo }));
@@ -19,6 +19,7 @@ router.post("/addTask", async (req, res) => {
     console.log(error);
   }
 });
+
 
 //update
 router.put("/updateTask/:id", async (req, res) => {

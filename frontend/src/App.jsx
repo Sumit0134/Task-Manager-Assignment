@@ -4,6 +4,7 @@ import Home from './components/home/Home';
 import Signup from './components/signup/Signup';
 import Signin from './components/signup/Signin';
 import Task from "./components/task/Task";
+import Update from './components/task/Update'; 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { authActions } from './store';
 import { useDispatch } from 'react-redux';
@@ -27,6 +28,7 @@ const App = () => {
           <Route path='/task' element={<Task />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/signin' element={<Signin />} />
+          <Route path="/updateTask/:id" element={<Update />} />
         </Routes>
       </Router>
     </div>

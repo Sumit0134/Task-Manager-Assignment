@@ -1,34 +1,94 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Task.css";
 import TaskCard from "./TaskCard";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Update from "./Update";
+import axios from "axios";
 
 const Task = () => {
-  const [Inputs, setInputs] = useState({ title: "", description: "" });
-  const [Array, setArray] = useState([]);
+  const [inputs, setInputs] = useState({ title: "", description: "" });
+  const [taskList, setTaskList] = useState([]);
+  const [showUpdate, setShowUpdate] = useState(false);
+  const id = sessionStorage.getItem("id");
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      if (!id) return;
+      try {
+        const res = await axios.get(`http://localhost:3000/api/v2/getTask/${id}`);
+        if (res.data.todos) {
+          setTaskList(res.data.todos);
+        } else {
+          toast.info(res.data.message || "No tasks found.");
+        }
+      } catch (error) {
+        toast.error("Error fetching tasks.");
+        console.error(error);
+      }
+    };
+    fetchTasks();
+  }, [id]);
+
   const change = (e) => {
     const { name, value } = e.target;
-    setInputs({ ...Inputs, [name]: value });
+    setInputs({ ...inputs, [name]: value });
   };
-  const submit = () => {
-    if (Inputs.title === "" || Inputs.description === "") {
+
+  const submit = async () => {
+    if (inputs.title === "" || inputs.description === "") {
       toast.error("Title or Description should not be empty.");
+      return;
+    }
+
+    if (id) {
+      try {
+        const res = await axios.post("http://localhost:3000/api/v2/addTask", {
+          title: inputs.title,
+          description: inputs.description,
+          id: id,
+        });
+
+        if (res.data.todo) {
+          setTaskList([res.data.todo, ...taskList]);
+          toast.success("Your task is added.");
+        }
+      } catch (err) {
+        toast.error("Error adding task.");
+        console.error(err);
+      }
     } else {
-      setArray([...Array, Inputs]);
-      setInputs({ title: "", description: "" });
-      toast.success("Your task is added.");
-      toast.error("Your task is added but not saved, please sign up.");
+      setTaskList([{ ...inputs, _id: Date.now() }, ...taskList]);
+      toast.success("Task added (not saved)");
+      toast.error("Please sign in to save tasks.");
+    }
+
+    setInputs({ title: "", description: "" });
+  };
+
+  const del = async (index) => {
+    const task = taskList[index];
+    const updatedList = [...taskList];
+    updatedList.splice(index, 1);
+    setTaskList(updatedList);
+
+    if (id && task._id) {
+      try {
+        await axios.delete(`http://localhost:3000/api/v2/deleteTask/${task._id}`, {
+          data: { email: "dummy@gmail.com" }, 
+        });
+        toast.success("Task deleted.");
+      } catch (err) {
+        toast.error("Error deleting task.");
+        console.error(err);
+      }
     }
   };
-  const del = (id) => {
-    Array.splice(id, "1");
-    setArray([...Array]);
+
+  const dis = (value) => {
+    setShowUpdate(value === "block");
   };
-  const dis=(value)=>{
-    document.getElementById("task-update").style.display=value;
-  }
+
   return (
     <>
       <div className="task">
@@ -40,28 +100,28 @@ const Task = () => {
               placeholder="Title"
               className="my-2 todo-inputs"
               name="title"
-              value={Inputs.title}
+              value={inputs.title}
               onChange={change}
             />
             <textarea
-              type="text"
               placeholder="Description"
               className="todo-inputs"
-              onChange={change}
               name="description"
-              value={Inputs.description}
+              value={inputs.description}
+              onChange={change}
             />
             <button className="mt-2" onClick={submit}>
               Add
             </button>
           </div>
         </div>
+
         <div className="task-body m-5">
           <div className="container">
             <div className="row">
-              {Array &&
-                Array.map((item, index) => (
-                  <div className="col-lg-3 col-9 mx-5 my-2" key={index}>
+              {taskList &&
+                taskList.map((item, index) => (
+                  <div className="col-lg-3 col-9 mx-5 my-2" key={item._id || index}>
                     <TaskCard
                       title={item.title}
                       description={item.description}
@@ -75,11 +135,14 @@ const Task = () => {
           </div>
         </div>
       </div>
-      <div className="task-update" id="task-update">
-        <div className="container update">
-        <Update display={dis}/>
+
+      {showUpdate && (
+        <div className="task-update" id="task-update">
+          <div className="container update">
+            <Update display={dis} />
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };
